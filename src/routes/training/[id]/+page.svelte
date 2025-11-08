@@ -9,27 +9,29 @@
 
 <div class="container mx-auto p-4">
 	<h1 class="mb-4 text-2xl font-bold">Training Details</h1>
-	<div class="mb-4">
-		<h2 class="text-xl font-semibold">Instructor</h2>
-		<p>{props.data.training.instructor.user.name}</p>
-	</div>
-	<div class="mb-4">
-		<h2 class="text-xl font-semibold">Learner</h2>
-		<p>{props.data.training.learner.user.name}</p>
-	</div>
-	<div class="mb-4">
-		<h2 class="text-xl font-semibold">Time</h2>
-		<p>
-			{Temporal.Instant.from(props.data.training.startTime.toISOString())
-				.toZonedDateTimeISO(Temporal.Now.timeZoneId())
-				.toPlainDateTime()
-				.toString()
-				.replace('T', ' ')} - {Temporal.Instant.from(props.data.training.endTime.toISOString())
-				.toZonedDateTimeISO(Temporal.Now.timeZoneId())
-				.toPlainDateTime()
-				.toString()
-				.replace('T', ' ')}
-		</p>
+	<div class="md:grid md:grid-cols-4">
+		<div class="mb-4">
+			<h2 class="text-xl font-semibold">Instructor</h2>
+			<p>{props.data.training.instructor.user.name}</p>
+		</div>
+		<div class="mb-4">
+			<h2 class="text-xl font-semibold">Learner</h2>
+			<p>{props.data.training.learner.user.name}</p>
+		</div>
+		<div class="mb-4 md:col-span-2">
+			<h2 class="text-xl font-semibold">Time</h2>
+			<p>
+				{Temporal.Instant.from(props.data.training.startTime.toISOString())
+					.toZonedDateTimeISO(Temporal.Now.timeZoneId())
+					.toPlainDateTime()
+					.toString()
+					.replace('T', ' ')} - {Temporal.Instant.from(props.data.training.endTime.toISOString())
+					.toZonedDateTimeISO(Temporal.Now.timeZoneId())
+					.toPlainDateTime()
+					.toString()
+					.replace('T', ' ')}
+			</p>
+		</div>
 	</div>
 	<div class="mb-4">
 		<h2 class="mb-4 text-xl font-semibold">
@@ -62,7 +64,7 @@
 							</form>
 						{/if}
 					</h3>
-					<ScoreSheet {scoreSheet} />
+					<ScoreSheet {scoreSheet} editable={$session.data?.user.role === 'INSTRUCTOR'} />
 				</div>
 			{/each}
 		{:else}

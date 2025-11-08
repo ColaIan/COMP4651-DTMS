@@ -38,6 +38,22 @@ export const actions = {
 				throw new Error('End time must be after start time');
 			}
 			await prisma.$transaction(async (prisma) => {
+				// check if start time >= now + leading time in minutes
+				const leadingTime = await prisma.instructor.findUnique({
+					where: { userId: params.id },
+					select: { bookingLeadingTime: true }
+				});
+				if (!leadingTime) {
+					throw new Error('Instructor not found');
+				}
+				const now = new Date();
+				now.setMinutes(now.getMinutes() + leadingTime.bookingLeadingTime);
+				if (startTime < now) {
+					throw new Error(
+						`Start time must be at least ${leadingTime.bookingLeadingTime} minutes from now`
+					);
+				}
+
 				// check if the requested time is within the instructor's availability
 				const availability = await prisma.instructorAvailability.findFirst({
 					where: {
