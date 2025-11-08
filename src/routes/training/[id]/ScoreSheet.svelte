@@ -28,7 +28,9 @@
 								scoreSheet.data.minor.includes(1)
 									? scoreSheet.data.minor.splice(scoreSheet.data.minor.indexOf(1), 1)
 									: scoreSheet.data.minor.push(1)}
-						/></td
+							disabled={!props.editable}
+                            title="Minor Mistake"
+						></button></td
 					><td class="text-center"
 						><button
 							class="h-3.5 w-5 cursor-pointer rounded-[3px] border"
@@ -37,7 +39,9 @@
 								scoreSheet.data.serious?.includes(1)
 									? scoreSheet.data.serious?.splice(scoreSheet.data.serious?.indexOf(1), 1)
 									: scoreSheet.data.serious?.push(1)}
-						/></td
+							disabled={!props.editable}
+						title="Serious Mistake"
+						></button></td
 					><td class="border-b">1. Fail to check traffic conditions</td></tr
 				>
 				<tr
@@ -49,7 +53,9 @@
 								scoreSheet.data.minor.includes(2)
 									? scoreSheet.data.minor.splice(scoreSheet.data.minor.indexOf(2), 1)
 									: scoreSheet.data.minor.push(2)}
-						/></td
+							disabled={!props.editable}
+						title="Minor Mistake"
+						></button></td
 					><td class="text-center"
 						><button
 							class="h-3.5 w-5 cursor-pointer rounded-[3px] border"
@@ -58,7 +64,9 @@
 								scoreSheet.data.serious?.includes(2)
 									? scoreSheet.data.serious?.splice(scoreSheet.data.serious?.indexOf(2), 1)
 									: scoreSheet.data.serious?.push(2)}
-						/></td
+							disabled={!props.editable}
+						title="Serious Mistake"
+						></button></td
 					><td class="border-b">2. Roll backwards</td></tr
 				>
 				<tr
@@ -70,7 +78,9 @@
 								scoreSheet.data.minor.includes(3)
 									? scoreSheet.data.minor.splice(scoreSheet.data.minor.indexOf(3), 1)
 									: scoreSheet.data.minor.push(3)}
-						/></td
+							disabled={!props.editable}
+						title="Minor Mistake"
+						></button></td
 					><td class="text-center"
 						><button
 							class="h-3.5 w-5 cursor-pointer rounded-[3px] border"
@@ -79,7 +89,9 @@
 								scoreSheet.data.serious?.includes(3)
 									? scoreSheet.data.serious?.splice(scoreSheet.data.serious?.indexOf(3), 1)
 									: scoreSheet.data.serious?.push(3)}
-						/></td
+							disabled={!props.editable}
+						title="Serious Mistake"
+						></button></td
 					><td class="border-b">3. Stop in improper position</td></tr
 				>
 			</tbody>
