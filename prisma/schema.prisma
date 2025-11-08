@@ -1,0 +1,143 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  role          Role     @default(LEARNER)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  sessions    Session[]
+  accounts    Account[]
+  instructor Instructor?
+  learner    Learner?
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
+}
+
+enum Role {
+  INSTRUCTOR
+  LEARNER
+  ADMIN
+}
+
+model Instructor {
+  user               User                     @relation(fields: [userId], references: [id])
+  userId                   String                   @id @map("user_id")
+  bookingLeadingTime       Int                      @default(30) @map("booking_leading_time")
+  instructorAvailabilities InstructorAvailability[]
+  trainings                Training[]
+
+  @@map("instructor")
+}
+
+model Learner {
+  user       User       @relation(fields: [userId], references: [id])
+  userId        String     @id @map("user_id")
+  licenseNumber String     @unique @map("license_number")
+  licenseExpiry DateTime   @map("license_expiry")
+  trainings     Training[]
+
+  @@map("learner")
+}
+
+model InstructorAvailability {
+  id           String     @id @default(uuid())
+  instructor   Instructor @relation(fields: [instructorId], references: [userId])
+  instructorId String     @map("instructor_id")
+  startTime    DateTime   @map("start_time")
+  endTime      DateTime   @map("end_time")
+
+  @@map("instructor_availability")
+}
+
+model Training {
+  id           String         @id @default(uuid())
+  instructor   Instructor     @relation(fields: [instructorId], references: [userId])
+  instructorId String         @map("instructor_id")
+  learner      Learner        @relation(fields: [learnerId], references: [userId])
+  learnerId    String         @map("learner_id")
+  startTime    DateTime       @map("start_time")
+  endTime      DateTime       @map("end_time")
+  status       TrainingStatus @default(CONFIRMED) // Default to CONFIRMED for demo simplicity
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  scoreSheets  ScoreSheet[]
+
+  @@map("training")
+}
+
+enum TrainingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model ScoreSheet {
+  id        String   @id @default(uuid())
+  training  Training @relation(fields: [trainingId], references: [id])
+  trainingId String   @map("training_id")
+  data      Json @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("score_sheet")
+}
