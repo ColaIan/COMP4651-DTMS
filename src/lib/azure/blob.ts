@@ -3,6 +3,10 @@ import { BlobSASPermissions, BlobServiceClient, generateBlobSASQueryParameters, 
 
 export const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_URL);
 
+export function getBlobExists(container: string, blobName: string) {
+    return blobServiceClient.getContainerClient(container).getBlobClient(blobName).exists();
+}
+
 export function getBlobSasUri(container: string, blobName: string, permissions: string) {
     const sasOptions: BlobSASSignatureValues = {
         containerName: blobServiceClient.getContainerClient(container).containerName,

@@ -1,4 +1,5 @@
-import { getBlobSasUri } from '$lib/azure/blob';
+import { getBlobExists, getBlobSasUri } from '$lib/azure/blob';
+import { getTrainingGroupUrl, sendTrainingMessage } from '$lib/azure/web-pubsub';
 import prisma from '$lib/prisma.server';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
@@ -23,13 +24,16 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	) {
 		throw redirect(307, '/training');
 	}
-	(training.learner as unknown as { licenseUrl: string }).licenseUrl = getBlobSasUri(
-		'licenses',
-		training.learner.userId,
-		'r'
-	);
+	if (await getBlobExists('licenses', training.learner.userId))
+		(training.learner as unknown as { licenseUrl: string }).licenseUrl = getBlobSasUri(
+			'licenses',
+			training.learner.userId,
+			'r'
+		);
+	training.scoreSheets = training.scoreSheets.map((x) => ({ ...x, data: JSON.parse(x.data) }));
 	return {
-		training
+		training,
+		trainingPubSubUrl: await getTrainingGroupUrl(params.id)
 	};
 };
 
@@ -41,13 +45,12 @@ export const actions = {
 		if (locals.user.role !== 'INSTRUCTOR') {
 			throw redirect(307, '/training/' + params.id);
 		}
-
-		await prisma.scoreSheet.create({
+		const scoreSheet = await prisma.scoreSheet.create({	
 			data: {
 				trainingId: params.id
 			}
 		});
-
+		await sendTrainingMessage(params.id,  { type: 'addScoreSheet', scoreSheetId: scoreSheet.id, data: JSON.parse(scoreSheet.data) } );
 		throw redirect(303, '/training/' + params.id);
 	},
 	updateScoreSheet: async ({ request, locals, params }) => {
@@ -61,7 +64,7 @@ export const actions = {
 		const formData = await request.formData();
 		const scoreSheetId = formData.get('scoreSheetId') as string;
 		const data = formData.get('data') as string;
-
+		await sendTrainingMessage(params.id,  { type: 'updateScoreSheet', scoreSheetId, data: JSON.parse(data) } );
 		await prisma.scoreSheet.update({
 			where: { id: scoreSheetId },
 			data: {
@@ -81,10 +84,10 @@ export const actions = {
 
 		const formData = await request.formData();
 		const scoreSheetId = formData.get('scoreSheetId') as string;
-
 		await prisma.scoreSheet.delete({
 			where: { id: scoreSheetId }
 		});
+		await sendTrainingMessage(params.id,  { type: 'deleteScoreSheet', scoreSheetId } );
 
 		throw redirect(303, '/training/' + params.id);
 	}

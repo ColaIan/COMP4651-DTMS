@@ -20,13 +20,13 @@
 			.default({ minor: [], serious: [] }),
 		remarks: z.string().default('')
 	});
-	const scoreSheet = $state({...props.scoreSheet, data: JSON.parse(props.scoreSheet.data)});
+	const scoreSheet = $state(props.scoreSheet);
 	scoreSheet.data = ScoreSheetData.parse(scoreSheet.data);
 
 	let form: HTMLFormElement;
 	const submitForm = async () => {
 		await tick();
-		form?.submit();
+		form?.requestSubmit();
 	};
 </script>
 
@@ -35,8 +35,7 @@
 	method="POST"
 	action="?/updateScoreSheet"
 	use:enhance={() => {
-		return async ({ update }) => {
-			await update();
+		return  () => {
 		};
 	}}
 >
@@ -170,7 +169,7 @@
 			<div class="px-1">
 				<p class="mb-1 text-sm font-medium">Remarks:</p>
 				<textarea
-					class="w-full border-none p-0"
+					class="w-full border-none p-0 resize-none"
 					rows="8"
 					bind:value={scoreSheet.data.remarks}
 					onblur={() => {

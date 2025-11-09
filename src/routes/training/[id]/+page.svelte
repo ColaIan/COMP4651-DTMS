@@ -1,11 +1,41 @@
 <script lang="ts">
 	import { useSession } from '$lib/auth-client';
-	import { getContext } from 'svelte';
+	import { WebPubSubClient } from '@azure/web-pubsub-client';
+	import { getContext, onMount } from 'svelte';
 	import { Temporal } from 'temporal-polyfill';
 	import ScoreSheet from './ScoreSheet.svelte';
 
 	const props = $props();
     const session = getContext<ReturnType<typeof useSession>>('session');
+		const scoreSheets = $state(props.data.training.scoreSheets);
+
+	onMount(()=>{
+		const client = new WebPubSubClient(props.data.trainingPubSubUrl)
+		client.on("group-message", (message)=>{
+			const data = message.message.data as {type: string, [key: string]: any};
+			switch(data.type as string){
+				case 'addScoreSheet':
+					scoreSheets.push({
+						id: data.scoreSheetId,
+						data: data.data
+					});
+					break;
+				case 'updateScoreSheet':
+					const scoreSheet = scoreSheets.find((s: {id: string})=>s.id === data.scoreSheetId);
+					if (scoreSheet) scoreSheet.data = data.data;
+					break;
+				case 'deleteScoreSheet':
+					const index = scoreSheets.findIndex((s: {id: string})=>s.id === data.scoreSheetId);
+					if(index !== -1) scoreSheets.splice(index, 1);
+					break;
+			}
+		});
+		client.start();
+
+		return ()=>{
+			client.stop();
+		}
+	})
 </script>
 
 <div class="container mx-auto p-4">
@@ -39,7 +69,9 @@
 			License
 			</h2>
 		<p>{props.data.training.learner.licenseNumber} ({props.data.training.learner.licenseExpiry.toISOString().split('T')[0]})</p>
-		<img src={props.data.training.learner.licenseUrl} alt="license" class="max-w-full max-h-xl"/>
+		{#if props.data.training.learner.licenseUrl}
+		<img src={props.data.training.learner.licenseUrl} alt="license" class="max-w-full max-h-xl" />
+		{/if}
 	</div>
 
 	<div class="mb-4">
@@ -55,8 +87,8 @@
 				</form>
 			{/if}
 		</h2>
-		{#if props.data.training.scoreSheets.length}
-			{#each props.data.training.scoreSheets as scoreSheet, i}
+		{#if scoreSheets.length}
+			{#each scoreSheets as scoreSheet, i}
 				<div class="mb-2 border p-2">
 					<h3 class="font-semibold">
 						Score Sheet #{i + 1}
