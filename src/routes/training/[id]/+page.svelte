@@ -2,9 +2,10 @@
 	import { useSession } from '$lib/auth-client';
 	import { Temporal } from 'temporal-polyfill';
 	import ScoreSheet from './ScoreSheet.svelte';
+	import { getContext } from 'svelte';
 
 	const props = $props();
-	const session = useSession();
+    const session = getContext<ReturnType<typeof useSession>>('session');
 </script>
 
 <div class="container mx-auto p-4">

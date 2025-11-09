@@ -2,10 +2,12 @@
 	import { goto } from '$app/navigation';
 	import favicon from '$lib/assets/favicon.svg';
 	import { signOut, useSession } from '$lib/auth-client';
+	import { setContext } from 'svelte';
 	import '../app.css';
 
 	let { children } = $props();
 	const session = useSession();
+	setContext('session', session);
 </script>
 
 <svelte:head>

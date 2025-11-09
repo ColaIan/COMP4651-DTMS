@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { useSession } from "$lib/auth-client";
+	import { getContext } from "svelte";
 
-    const session = useSession();
+    const session = getContext<ReturnType<typeof useSession>>('session');
 </script>
 
 <div class="container mx-auto p-4">

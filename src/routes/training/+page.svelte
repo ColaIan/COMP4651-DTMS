@@ -1,8 +1,5 @@
 <script lang="ts">
-    import { useSession } from '$lib/auth-client';
-
     const props = $props();
-    const session = useSession();
 </script>
 
 <div class="container mx-auto p-4">
