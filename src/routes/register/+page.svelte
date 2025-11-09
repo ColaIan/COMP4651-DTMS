@@ -2,6 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { signUp } from '$lib/auth-client';
 	let role = $state('LEARNER');
+
+	const MILLISECONDS_PER_DAY = 86400000;
 </script>
 
 <div class="container mx-auto p-4">
@@ -129,6 +131,8 @@
 					name="licenseExpiry"
 					required
 					class="mt-1 w-full rounded border border-gray-300 px-3 py-2"
+					min={new Date(Date.now() - MILLISECONDS_PER_DAY).toISOString().split('T')[0]}
+					max={new Date(Date.now() + MILLISECONDS_PER_DAY * 365 * 100).toISOString().split('T')[0]}
 				/>
 			</div>
 		{/if}
