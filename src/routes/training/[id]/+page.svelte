@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { useSession } from '$lib/auth-client';
+	import { getContext } from 'svelte';
 	import { Temporal } from 'temporal-polyfill';
 	import ScoreSheet from './ScoreSheet.svelte';
-	import { getContext } from 'svelte';
 
 	const props = $props();
     const session = getContext<ReturnType<typeof useSession>>('session');
@@ -35,7 +35,15 @@
 		</div>
 	</div>
 	<div class="mb-4">
-		<h2 class="mb-4 text-xl font-semibold">
+		<h2 class="text-xl font-semibold">
+			License
+			</h2>
+		<p>{props.data.training.learner.licenseNumber} ({props.data.training.learner.licenseExpiry.toISOString().split('T')[0]})</p>
+		<img src={props.data.training.learner.licenseUrl} alt="license" class="max-w-full max-h-xl"/>
+	</div>
+
+	<div class="mb-4">
+		<h2 class="mb-2 text-xl font-semibold">
 			Score Sheets
 			{#if $session.data?.user.role === 'INSTRUCTOR'}
 				<form

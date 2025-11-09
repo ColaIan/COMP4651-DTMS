@@ -3,6 +3,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 // If your Prisma file is located elsewhere, you can change the path
 import { getRequestEvent } from '$app/server';
 import { authPlugin } from '$lib/auth-plugin';
+import { blobServiceClient } from '$lib/azure/blob';
 import prisma from '$lib/prisma.server';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 export const auth = betterAuth({
@@ -21,11 +22,11 @@ export const auth = betterAuth({
 		user: {
 			create: {
 				before: async (user, ctx) => {
-					const { role, licenseNumber, licenseExpiry } = ctx!.body;
+					const { role, licenseFile, licenseNumber, licenseExpiry } = ctx!.body;
 					if (role !== 'INSTRUCTOR' && role !== 'LEARNER') throw new Error('Invalid role');
 					if (role === 'LEARNER') {
-						if (typeof licenseNumber !== 'string' || typeof licenseExpiry !== 'string')
-							throw new Error('Learner must provide license number and expiry date');
+						if (typeof licenseFile !== 'string' || typeof licenseNumber !== 'string' || typeof licenseExpiry !== 'string')
+							throw new Error('Learner must provide license file, number and expiry date');
 						if (new Date(licenseExpiry) < new Date())
 							throw new Error('Learner license has expired');
 					}
@@ -40,7 +41,10 @@ export const auth = betterAuth({
 							}
 						});
 					} else {
-						const { licenseNumber, licenseExpiry } = ctx!.body;
+						const { licenseFile, licenseNumber, licenseExpiry } = ctx!.body;
+						await blobServiceClient.getContainerClient('licenses').getBlockBlobClient(user.id).uploadData(Buffer.from(licenseFile.substring(licenseFile.indexOf(',') + 1), 'base64'), {
+							blobHTTPHeaders: { blobContentType: 'image/png' }
+						});
 						await prisma.learner.upsert({
 							where: { userId: user.id },
 							update: {

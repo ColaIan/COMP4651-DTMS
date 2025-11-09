@@ -10,5 +10,6 @@ export default defineConfig({
   engine: "classic",
   datasource: {
     url: env("DATABASE_URL"),
+    // url: env("AZURE_SQL_DATABASE_URL"),
   },
 });

@@ -4,17 +4,21 @@ export const authPlugin = () =>
 	({
 		id: 'authPlugin',
 		schema: {
-			learner: {
-				fields: {
-					licenseNumber: {
-						type: 'string',
-						required: false
-					},
-					licenseExpiry: {
-						type: 'date',
-						required: false
-					}
-				}
-			}
+			// learner: {
+			// 	fields: {
+			// 		licenseNumber: {
+			// 			type: 'string',
+			// 			required: false
+			// 		},
+			// 		licenseExpiry: {
+			// 			type: 'date',
+			// 			required: false
+			// 		},
+			// 		licenseFile: {
+			// 			type: 'string',
+			// 			required: false
+			// 		}
+			// 	}
+			// }
 		},
 	}) satisfies BetterAuthPlugin;

@@ -1,3 +1,4 @@
+import { getBlobSasUri } from '$lib/azure/blob';
 import prisma from '$lib/prisma.server';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
@@ -6,15 +7,29 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	if (!locals.user) {
 		redirect(307, '/login');
 	}
+	const training = await prisma.training.findUnique({
+		where: { id: params.id },
+		include: {
+			learner: { include: { user: { select: { name: true } } } },
+			instructor: { include: { user: { select: { name: true } } } },
+			scoreSheets: true
+		}
+	});
+	// Only allow access if the user is the learner or instructor of the training
+	if (
+		!training ||
+		(locals.user.role === 'LEARNER' && training.learner.userId !== locals.user.id) ||
+		(locals.user.role === 'INSTRUCTOR' && training.instructor.userId !== locals.user.id)
+	) {
+		throw redirect(307, '/training');
+	}
+	(training.learner as unknown as { licenseUrl: string }).licenseUrl = getBlobSasUri(
+		'licenses',
+		training.learner.userId,
+		'r'
+	);
 	return {
-		training: await prisma.training.findUnique({
-			where: { id: params.id },
-			include: {
-				learner: { include: { user: { select: { name: true } } } },
-				instructor: { include: { user: { select: { name: true } } } },
-				scoreSheets: true
-			}
-		})
+		training
 	};
 };
 
@@ -50,7 +65,7 @@ export const actions = {
 		await prisma.scoreSheet.update({
 			where: { id: scoreSheetId },
 			data: {
-				data: JSON.parse(data)
+				data
 			}
 		});
 

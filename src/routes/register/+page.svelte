@@ -7,7 +7,7 @@
 <div class="container mx-auto p-4">
 	<h1 class="text-2xl font-bold">Driving Training Management System Register</h1>
 	<form
-		onsubmit={(e) => {
+		onsubmit={async (e) => {
 			e.preventDefault();
 			const formData = new FormData(e.currentTarget);
 			const name = formData.get('name') as string;
@@ -16,6 +16,21 @@
 			const role = formData.get('role') as string;
 			const licenseNumber = formData.get('licenseNumber') as string;
 			const licenseExpiry = formData.get('licenseExpiry') as string;
+			const licenseFile = formData.get('licenseFile') as File;
+
+			const readFile = () => new Promise<string | null>((resolve) => {
+				if (role === 'LEARNER' && licenseFile instanceof File) {
+					const reader = new FileReader();
+					reader.onload = (event) => {
+						const licenseFileData = event.target!.result as string;
+						resolve(licenseFileData);
+					};
+					reader.readAsDataURL(licenseFile);
+				} else {
+					resolve(null);
+				}
+			});
+			
 			signUp
 				.email(
 					{
@@ -23,7 +38,11 @@
 						password,
 						name,
 						role,
-						...(role === 'LEARNER' && { licenseNumber, licenseExpiry: new Date(licenseExpiry) })
+						...(role === 'LEARNER' && {
+							licenseNumber,
+							licenseExpiry: new Date(licenseExpiry),
+							licenseFile: await readFile()
+						})
 					},
 					{
 						throw: true
@@ -80,6 +99,19 @@
 			</div>
 		</div>
 		{#if role === 'LEARNER'}
+			<div class="mt-4">
+				<label for="licenseFile" class="block font-medium">License Photo:</label>
+				<input
+					type="file"
+					accept="image/png"
+					size={1024 * 1024}
+					multiple={false}
+					id="licenseFile"
+					name="licenseFile"
+					required
+					class="mt-1 w-full rounded border border-gray-300 px-3 py-2"
+				/>
+			</div>
 			<div class="mt-4">
 				<label for="licenseNumber" class="block font-medium">License Number:</label>
 				<input

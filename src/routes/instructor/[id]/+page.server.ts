@@ -12,7 +12,10 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			include: {
 				instructor: {
 					include: {
-						instructorAvailabilities: true
+						instructorAvailabilities: {
+							where: { endTime: { gt: new Date() } },
+							orderBy: { startTime: 'asc' }
+						}
 					}
 				}
 			},

@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -7,6 +6,8 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // provider = "sqlserver"
+  // url      = env("AZURE_SQL_DATABASE_URL")
 }
 
 model User {
@@ -15,17 +16,23 @@ model User {
   email         String   @unique
   emailVerified Boolean  @default(false)
   image         String?
-  role          Role     @default(LEARNER)
+  role          String     @default("LEARNER")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  sessions    Session[]
-  accounts    Account[]
+  sessions   Session[]
+  accounts   Account[]
   instructor Instructor?
   learner    Learner?
 
   @@map("user")
 }
+
+// enum Role {
+//   INSTRUCTOR
+//   LEARNER
+//   ADMIN
+// }
 
 model Session {
   id        String   @id
@@ -72,14 +79,8 @@ model Verification {
   @@map("verification")
 }
 
-enum Role {
-  INSTRUCTOR
-  LEARNER
-  ADMIN
-}
-
 model Instructor {
-  user               User                     @relation(fields: [userId], references: [id])
+  user                     User                     @relation(fields: [userId], references: [id])
   userId                   String                   @id @map("user_id")
   bookingLeadingTime       Int                      @default(30) @map("booking_leading_time")
   instructorAvailabilities InstructorAvailability[]
@@ -89,7 +90,7 @@ model Instructor {
 }
 
 model Learner {
-  user       User       @relation(fields: [userId], references: [id])
+  user          User       @relation(fields: [userId], references: [id])
   userId        String     @id @map("user_id")
   licenseNumber String     @unique @map("license_number")
   licenseExpiry DateTime   @map("license_expiry")
@@ -110,13 +111,13 @@ model InstructorAvailability {
 
 model Training {
   id           String         @id @default(uuid())
-  instructor   Instructor     @relation(fields: [instructorId], references: [userId])
+  instructor   Instructor     @relation(fields: [instructorId], references: [userId], onUpdate: NoAction, onDelete: NoAction)
   instructorId String         @map("instructor_id")
-  learner      Learner        @relation(fields: [learnerId], references: [userId])
+  learner      Learner        @relation(fields: [learnerId], references: [userId], onUpdate: NoAction, onDelete: NoAction)
   learnerId    String         @map("learner_id")
   startTime    DateTime       @map("start_time")
   endTime      DateTime       @map("end_time")
-  status       TrainingStatus @default(CONFIRMED) // Default to CONFIRMED for demo simplicity
+  status       String         @default("CONFIRMED") // Default to CONFIRMED for demo simplicity
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime       @updatedAt @map("updated_at")
   scoreSheets  ScoreSheet[]
@@ -124,20 +125,21 @@ model Training {
   @@map("training")
 }
 
-enum TrainingStatus {
-  PENDING
-  CONFIRMED
-  COMPLETED
-  CANCELLED
-}
+// enum TrainingStatus {
+//   PENDING
+//   CONFIRMED
+//   COMPLETED
+//   CANCELLED
+// }
 
 model ScoreSheet {
-  id        String   @id @default(uuid())
-  training  Training @relation(fields: [trainingId], references: [id])
+  id         String   @id @default(uuid())
+  training   Training @relation(fields: [trainingId], references: [id])
   trainingId String   @map("training_id")
-  data      Json @default("{}")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  data       String   @db.Text() @default("{}")
+  // data       String   @db.NVarChar(Max) @default("{}")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
   @@map("score_sheet")
 }

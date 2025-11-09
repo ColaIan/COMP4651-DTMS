@@ -20,7 +20,7 @@
 			.default({ minor: [], serious: [] }),
 		remarks: z.string().default('')
 	});
-	const scoreSheet = $state(props.scoreSheet);
+	const scoreSheet = $state({...props.scoreSheet, data: JSON.parse(props.scoreSheet.data)});
 	scoreSheet.data = ScoreSheetData.parse(scoreSheet.data);
 
 	let form: HTMLFormElement;
@@ -150,8 +150,8 @@
 		{/if}
 	</tr>
 {/snippet}
-<div class="flex border-y">
-	<div class="w-3/10 border-r">
+<div class="lg:flex border-y">
+	<div class="lg:w-3/10 lg:border-r">
 		<table>
 			<thead>
 				<tr>
@@ -181,7 +181,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="w-4/10">
+	<div class="lg:w-4/10">
 		<table>
 			<thead>
 				<tr>
@@ -199,7 +199,7 @@
 			</tbody>
 		</table>
 	</div>
-	<div class="w-3/10 border-l">
+	<div class="lg:w-3/10 lg:border-l">
 		<table>
 			<thead>
 				<tr>
