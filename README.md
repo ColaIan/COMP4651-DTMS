@@ -16,6 +16,11 @@ Optionally start Prisma Studio to view database data in your browser
 bun prisma studio
 ```
 
+SWA Test
+```sh
+bun run build && cd build/server && bun i && cd ../.. && bun swa start
+```
+
 ## Building
 
 To create a production version of your app:

@@ -69,7 +69,8 @@
 		<p>
 			{props.data.training.learner.licenseNumber} ({props.data.training.learner.licenseExpiry
 				.toISOString()
-				.split('T')[0]})
+				.split('T')[0]
+				})
 		</p>
 		{#if props.data.training.learner.licenseUrl}
 			<img src={props.data.training.learner.licenseUrl} alt="license" class="max-h-xl max-w-full" />

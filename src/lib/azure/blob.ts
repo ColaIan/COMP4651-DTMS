@@ -27,7 +27,6 @@ export function getBlobSasUri(container: string, blobName: string, permissions: 
 		sasOptions,
 		new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_KEY)
 	).toString();
-	console.log(`SAS token for blob is: ${sasToken}`);
 
 	return `${getBlobServiceClient().getContainerClient(container).getBlockBlobClient(blobName).url}?${sasToken}`;
 }

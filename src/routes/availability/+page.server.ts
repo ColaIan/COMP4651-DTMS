@@ -1,15 +1,25 @@
-import prisma from '$lib/prisma.server';
+import db from '$lib/db.server';
+import { randomUUID } from 'node:crypto';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) redirect(307, '/login');
 	if (locals.user.role !== 'INSTRUCTOR') redirect(307, '/instructor');
-	const availabilities = await prisma.instructorAvailability.findMany({
-		where: { instructorId: locals.user.id },
-		orderBy: { startTime: 'asc' }
-	});
-	await prisma.$disconnect();
+	const rows = await db
+		.selectFrom('instructor_availability')
+		.selectAll()
+		.where('instructor_id', '=', locals.user.id)
+		.orderBy('start_time', 'asc')
+		.execute();
+
+	// Map snake_case DB columns to camelCase shape expected by the UI
+	const availabilities = rows.map((r) => ({
+		id: r.id,
+		startTime: r.start_time,
+		endTime: r.end_time
+	}));
+
 	return {
 		availabilities
 	};
@@ -25,26 +35,25 @@ export const actions = {
 		if (startTime >= endTime) {
 			throw new Error('End time must be after start time');
 		}
-		await prisma.instructorAvailability.create({
-			data: {
-				instructorId: locals.user.id,
-				startTime,
-				endTime
-			}
-		});
-		await prisma.$disconnect();
+		await db
+			.insertInto('instructor_availability')
+			.values({
+				id: randomUUID(),
+				instructor_id: locals.user.id,
+				start_time: startTime,
+				end_time: endTime
+			})
+			.execute();
 	},
 	delete: async ({ request, locals }) => {
 		if (!locals.user) redirect(307, '/login');
 		if (locals.user.role !== 'INSTRUCTOR') redirect(307, '/instructor');
 		const data = await request.formData();
 		const id = data.get('id') as string;
-		await prisma.instructorAvailability.deleteMany({
-			where: {
-				id,
-				instructorId: locals.user.id
-			}
-		});
-		await prisma.$disconnect();
+ 		await db
+ 			.deleteFrom('instructor_availability')
+ 			.where('id', '=', id)
+ 			.where('instructor_id', '=', locals.user.id)
+ 			.execute();
 	}
 };

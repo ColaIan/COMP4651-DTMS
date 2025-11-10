@@ -2,14 +2,13 @@ import { getRequestEvent } from '$app/server';
 import { AZURE_ENTRA_ID_CLIENT_ID, AZURE_ENTRA_ID_CLIENT_SECRET } from '$env/static/private';
 import { authPlugin } from '$lib/auth-plugin';
 import { getBlobExists, getBlobServiceClient } from '$lib/azure/blob';
-import prisma from '$lib/prisma.server';
+import { db, dialect } from '$lib/db.server';
 import { betterAuth } from 'better-auth';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
+import { sql } from 'kysely';
+
 export const auth = betterAuth({
-	database: prismaAdapter(prisma, {
-		provider: 'postgresql'
-	}),
+	database: { dialect, type: 'mssql' },
 	user: {
 		additionalFields: {
 			role: {
@@ -38,13 +37,12 @@ export const auth = betterAuth({
 				after: async (user, ctx) => {
 					try {
 						if (user.role === 'INSTRUCTOR') {
-							await prisma.instructor.upsert({
-								where: { userId: user.id },
-								update: {},
-								create: {
-									userId: user.id
-								}
-							});
+							// Insert instructor row if it doesn't already exist.
+							await db
+								.insertInto('instructor')
+								.values({ user_id: user.id, booking_leading_time: 0 })
+								// .onConflict((oc) => oc.column('user_id').doNothing())
+								.execute();
 						} else {
 							const { licenseFile, licenseNumber, licenseExpiry } = ctx!.body;
 							await getBlobServiceClient()
@@ -56,30 +54,25 @@ export const auth = betterAuth({
 										blobHTTPHeaders: { blobContentType: 'image/png' }
 									}
 								);
-							await prisma.learner.upsert({
-								where: { userId: user.id },
-								update: {
-									licenseNumber,
-									licenseExpiry: new Date(licenseExpiry)
-								},
-								create: {
-									userId: user.id,
-									licenseNumber,
-									licenseExpiry: new Date(licenseExpiry)
-								}
-							});
+							await db
+								.insertInto('learner')
+								.values({ user_id: user.id, license_number: licenseNumber, license_expiry: new Date(licenseExpiry) })
+								// .onConflict((oc) =>
+								// 	oc.column('user_id').doUpdateSet({ license_number: licenseNumber, license_expiry: new Date(licenseExpiry) })
+								// )
+								.execute();
 						}
-					} catch {
+					} catch (e) {
+						console.error('Error creating user related data, reverting user creation', e);
 						if (user.role === 'LEARNER' && (await getBlobExists('licenses', user.id))) {
 							const blobClient = getBlobServiceClient()
 								.getContainerClient('licenses')
 								.getBlockBlobClient(user.id);
 							await blobClient.delete();
 						}
-						await prisma.user.delete({ where: { id: user.id } });
+						await db.deleteFrom('user').where('id', '=', user.id).execute();
 						throw new Error('Error creating user related data, reverting user creation');
 					}
-					await prisma.$disconnect();
 				}
 			}
 		}

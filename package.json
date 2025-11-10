@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "prisma generate --no-engine && vite build",
+		"build": "prisma generate && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -49,12 +49,19 @@
 		"@azure/web-pubsub": "^1.2.0",
 		"@azure/web-pubsub-client": "^1.0.2",
 		"@prisma/client": "^6.19.0",
+		"@tediousjs/connection-string": "^1.0.0",
+		"@types/mssql": "^9.1.8",
 		"better-auth": "^1.3.34",
 		"dotenv": "^17.2.3",
+		"kysely": "^0.28.8",
+		"mssql": "^12.1.0",
+		"prisma-kysely": "^2.2.1",
+		"tarn": "^3.0.2",
+		"tedious": "^18.6.1",
 		"temporal-polyfill": "^0.3.0",
 		"zod": "^4.1.12"
 	},
 	"engines": {
-		"node": ">=20.0.0"
+		"node": "=22"
 	}
 }

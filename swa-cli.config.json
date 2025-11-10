@@ -1,11 +1,12 @@
 {
-	"configurations": {
-		"app": {
-			"appBuildCommand": "bun run build",
-			"outputLocation": ".",
-			"appLocation": "./build/static",
-			"apiLocation": "./build/server",
-			"host": "127.0.0.1"
-		}
-	}
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
+  "configurations": {
+    "sveltekit-swa-full-stack-app": {
+      "appLocation": ".",
+      "outputLocation": "build/static",
+      "apiLocation": "build/server",
+      "appBuildCommand": "npm run build",
+      "run": "npm run dev"
+    }
+  }
 }
