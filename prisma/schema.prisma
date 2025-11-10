@@ -4,10 +4,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  // provider = "sqlserver"
-  // url      = env("AZURE_SQL_DATABASE_URL")
+  // provider = "postgresql"
+  // url      = env("DATABASE_URL")
+  provider = "sqlserver"
+  url      = env("AZURE_SQL_DATABASE_URL")
 }
 
 model User {

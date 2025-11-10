@@ -5,27 +5,28 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals, params }) => {
 	if (!locals.user) throw redirect(307, '/login');
 	if (locals.user.role !== 'LEARNER') throw redirect(307, '/training');
-
-	return {
-		instructor: await prisma.user.findUnique({
-			where: { id: params.id },
-			include: {
-				instructor: {
-					include: {
-						instructorAvailabilities: {
-							where: { endTime: { gt: new Date() } },
-							orderBy: { startTime: 'asc' }
-						}
+	const instructor = await prisma.user.findUnique({
+		where: { id: params.id },
+		include: {
+			instructor: {
+				include: {
+					instructorAvailabilities: {
+						where: { endTime: { gt: new Date() } },
+						orderBy: { startTime: 'asc' }
 					}
 				}
-			},
-			omit: {
-				email: true,
-				role: true,
-				createdAt: true,
-				updatedAt: true
 			}
-		})
+		},
+		omit: {
+			email: true,
+			role: true,
+			createdAt: true,
+			updatedAt: true
+		}
+	});
+	await prisma.$disconnect();
+	return {
+		instructor
 	};
 };
 
@@ -100,6 +101,7 @@ export const actions = {
 					}
 				});
 			});
+			await prisma.$disconnect();
 		} catch (error) {
 			return { success: false, message: (error as Error).message };
 		}

@@ -16,6 +16,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			scoreSheets: true
 		}
 	});
+	await prisma.$disconnect();
 	// Only allow access if the user is the learner or instructor of the training
 	if (
 		!training ||
@@ -45,12 +46,17 @@ export const actions = {
 		if (locals.user.role !== 'INSTRUCTOR') {
 			throw redirect(307, '/training/' + params.id);
 		}
-		const scoreSheet = await prisma.scoreSheet.create({	
+		const scoreSheet = await prisma.scoreSheet.create({
 			data: {
 				trainingId: params.id
 			}
 		});
-		await sendTrainingMessage(params.id,  { type: 'addScoreSheet', scoreSheetId: scoreSheet.id, data: JSON.parse(scoreSheet.data) } );
+		await prisma.$disconnect();
+		await sendTrainingMessage(params.id, {
+			type: 'addScoreSheet',
+			scoreSheetId: scoreSheet.id,
+			data: JSON.parse(scoreSheet.data)
+		});
 		throw redirect(303, '/training/' + params.id);
 	},
 	updateScoreSheet: async ({ request, locals, params }) => {
@@ -64,14 +70,18 @@ export const actions = {
 		const formData = await request.formData();
 		const scoreSheetId = formData.get('scoreSheetId') as string;
 		const data = formData.get('data') as string;
-		await sendTrainingMessage(params.id,  { type: 'updateScoreSheet', scoreSheetId, data: JSON.parse(data) } );
+		await sendTrainingMessage(params.id, {
+			type: 'updateScoreSheet',
+			scoreSheetId,
+			data: JSON.parse(data)
+		});
 		await prisma.scoreSheet.update({
 			where: { id: scoreSheetId },
 			data: {
 				data
 			}
 		});
-
+		await prisma.$disconnect();
 		throw redirect(303, '/training/' + params.id);
 	},
 	deleteScoreSheet: async ({ request, locals, params }) => {
@@ -87,8 +97,8 @@ export const actions = {
 		await prisma.scoreSheet.delete({
 			where: { id: scoreSheetId }
 		});
-		await sendTrainingMessage(params.id,  { type: 'deleteScoreSheet', scoreSheetId } );
-
+		await prisma.$disconnect();
+		await sendTrainingMessage(params.id, { type: 'deleteScoreSheet', scoreSheetId });
 		throw redirect(303, '/training/' + params.id);
 	}
 };

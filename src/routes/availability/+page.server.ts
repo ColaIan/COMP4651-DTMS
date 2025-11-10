@@ -3,24 +3,22 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	if (!locals.user) 
-		redirect(307, '/login');
-	if (locals.user.role !== 'INSTRUCTOR')
-		redirect(307, '/instructor');
+	if (!locals.user) redirect(307, '/login');
+	if (locals.user.role !== 'INSTRUCTOR') redirect(307, '/instructor');
+	const availabilities = await prisma.instructorAvailability.findMany({
+		where: { instructorId: locals.user.id },
+		orderBy: { startTime: 'asc' }
+	});
+	await prisma.$disconnect();
 	return {
-		availabilities: await prisma.instructorAvailability.findMany({
-			where: { instructorId: locals.user.id },
-			orderBy: { startTime: 'asc' }
-		})
-	}
+		availabilities
+	};
 };
 
 export const actions = {
 	create: async ({ request, locals }) => {
-		if (!locals.user) 
-			redirect(307, '/login');
-		if (locals.user.role !== 'INSTRUCTOR')
-			redirect(307, '/instructor');
+		if (!locals.user) redirect(307, '/login');
+		if (locals.user.role !== 'INSTRUCTOR') redirect(307, '/instructor');
 		const data = await request.formData();
 		const startTime = new Date(data.get('startTime') as string);
 		const endTime = new Date(data.get('endTime') as string);
@@ -34,12 +32,11 @@ export const actions = {
 				endTime
 			}
 		});
+		await prisma.$disconnect();
 	},
 	delete: async ({ request, locals }) => {
-		if (!locals.user) 
-			redirect(307, '/login');
-		if (locals.user.role !== 'INSTRUCTOR')
-			redirect(307, '/instructor');
+		if (!locals.user) redirect(307, '/login');
+		if (locals.user.role !== 'INSTRUCTOR') redirect(307, '/instructor');
 		const data = await request.formData();
 		const id = data.get('id') as string;
 		await prisma.instructorAvailability.deleteMany({
@@ -48,5 +45,6 @@ export const actions = {
 				instructorId: locals.user.id
 			}
 		});
+		await prisma.$disconnect();
 	}
 };
