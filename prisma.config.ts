@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
 
 config();
 export default defineConfig({
@@ -10,6 +10,6 @@ export default defineConfig({
   engine: "classic",
   datasource: {
     // url: env("DATABASE_URL"),
-    url: env("AZURE_SQL_DATABASE_URL"),
+    url: process.env.AZURE_SQL_DATABASE_URL!,
   },
 });
