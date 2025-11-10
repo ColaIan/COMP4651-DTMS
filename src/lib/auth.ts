@@ -1,7 +1,7 @@
 import { getRequestEvent } from '$app/server';
 import { env } from '$env/dynamic/private';
 import { authPlugin } from '$lib/auth-plugin';
-import { blobServiceClient, getBlobExists } from '$lib/azure/blob';
+import { getBlobExists, getBlobServiceClient } from '$lib/azure/blob';
 import prisma from '$lib/prisma.server';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
@@ -47,7 +47,7 @@ export const auth = betterAuth({
 							});
 						} else {
 							const { licenseFile, licenseNumber, licenseExpiry } = ctx!.body;
-							await blobServiceClient
+							await getBlobServiceClient
 								.getContainerClient('licenses')
 								.getBlockBlobClient(user.id)
 								.uploadData(
@@ -71,7 +71,7 @@ export const auth = betterAuth({
 						}
 					} catch {
 						if (user.role === "LEARNER" && await getBlobExists('licenses', user.id)) {
-							const blobClient = blobServiceClient
+							const blobClient = getBlobServiceClient
 								.getContainerClient('licenses')
 								.getBlockBlobClient(user.id);
 							await blobClient.delete();
