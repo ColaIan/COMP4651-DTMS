@@ -71,7 +71,7 @@ export const auth = betterAuth({
 						}
 					} catch {
 						if (user.role === "LEARNER" && await getBlobExists('licenses', user.id)) {
-							const blobClient = getBlobServiceClient
+							const blobClient = getBlobServiceClient()
 								.getContainerClient('licenses')
 								.getBlockBlobClient(user.id);
 							await blobClient.delete();
