@@ -1,5 +1,5 @@
 import { getRequestEvent } from '$app/server';
-import { AZURE_ENTRA_ID_CLIENT_ID, AZURE_ENTRA_ID_CLIENT_SECRET } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { authPlugin } from '$lib/auth-plugin';
 import { blobServiceClient, getBlobExists } from '$lib/azure/blob';
 import prisma from '$lib/prisma.server';
@@ -89,8 +89,8 @@ export const auth = betterAuth({
 	},
 	socialProviders: {
 		microsoft: {
-			clientId: AZURE_ENTRA_ID_CLIENT_ID,
-			clientSecret: AZURE_ENTRA_ID_CLIENT_SECRET,
+			clientId: env.AZURE_ENTRA_ID_CLIENT_ID,
+			clientSecret: env.AZURE_ENTRA_ID_CLIENT_SECRET,
 			tenantId: 'common',
 			authority: 'https://login.microsoftonline.com', // Authentication authority URL
 			prompt: 'select_account' // Forces account selection

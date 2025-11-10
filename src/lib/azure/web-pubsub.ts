@@ -1,7 +1,7 @@
-import { AZURE_WEB_PUBSUB_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { WebPubSubServiceClient, type JSONTypes } from '@azure/web-pubsub';
 
-export const trainingService = new WebPubSubServiceClient(AZURE_WEB_PUBSUB_URL, 'trainings');
+export const trainingService = new WebPubSubServiceClient(env.AZURE_WEB_PUBSUB_URL, 'trainings');
 
 export const sendTrainingMessage = async (trainingId: string, data: JSONTypes) =>
 	await trainingService.group(trainingId).sendToAll(data);
