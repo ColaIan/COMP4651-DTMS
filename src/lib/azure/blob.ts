@@ -1,4 +1,4 @@
-import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_KEY, AZURE_STORAGE_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import {
 	BlobSASPermissions,
 	BlobServiceClient,
@@ -7,7 +7,7 @@ import {
 	type BlobSASSignatureValues
 } from '@azure/storage-blob';
 
-export const getBlobServiceClient = () => BlobServiceClient.fromConnectionString(AZURE_STORAGE_URL);
+export const getBlobServiceClient = () => BlobServiceClient.fromConnectionString(env.AZURE_STORAGE_URL);
 
 export function getBlobExists(container: string, blobName: string) {
 	return getBlobServiceClient().getContainerClient(container).getBlobClient(blobName).exists();
@@ -25,7 +25,7 @@ export function getBlobSasUri(container: string, blobName: string, permissions: 
 
 	const sasToken = generateBlobSASQueryParameters(
 		sasOptions,
-		new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_KEY)
+		new StorageSharedKeyCredential(env.AZURE_STORAGE_ACCOUNT, env.AZURE_STORAGE_KEY)
 	).toString();
 
 	return `${getBlobServiceClient().getContainerClient(container).getBlockBlobClient(blobName).url}?${sasToken}`;

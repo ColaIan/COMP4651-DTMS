@@ -1,11 +1,10 @@
 import { getRequestEvent } from '$app/server';
-import { AZURE_ENTRA_ID_CLIENT_ID, AZURE_ENTRA_ID_CLIENT_SECRET } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { authPlugin } from '$lib/auth-plugin';
 import { getBlobExists, getBlobServiceClient } from '$lib/azure/blob';
 import { db, dialect } from '$lib/db.server';
 import { betterAuth } from 'better-auth';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
-import { sql } from 'kysely';
 
 export const auth = betterAuth({
 	database: { dialect, type: 'mssql' },
@@ -82,8 +81,8 @@ export const auth = betterAuth({
 	},
 	socialProviders: {
 		microsoft: {
-			clientId: AZURE_ENTRA_ID_CLIENT_ID,
-			clientSecret: AZURE_ENTRA_ID_CLIENT_SECRET,
+			clientId: env.AZURE_ENTRA_ID_CLIENT_ID,
+			clientSecret: env.AZURE_ENTRA_ID_CLIENT_SECRET,
 			tenantId: 'common',
 			authority: 'https://login.microsoftonline.com', // Authentication authority URL
 			prompt: 'select_account' // Forces account selection
