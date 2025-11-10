@@ -6,6 +6,8 @@ Once you've created a project and installed dependencies with `bun install`, sta
 
 ```sh
 bun prisma dev # Start prisma development database
+bun prisma db push # (First time) Create tables
+
 bun dev # Start development server
 ```
 

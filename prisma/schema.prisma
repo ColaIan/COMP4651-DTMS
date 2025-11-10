@@ -16,7 +16,7 @@ model User {
   email         String   @unique
   emailVerified Boolean  @default(false)
   image         String?
-  role          String     @default("LEARNER")
+  role          String   @default("LEARNER")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
@@ -110,16 +110,16 @@ model InstructorAvailability {
 }
 
 model Training {
-  id           String         @id @default(uuid())
-  instructor   Instructor     @relation(fields: [instructorId], references: [userId], onUpdate: NoAction, onDelete: NoAction)
-  instructorId String         @map("instructor_id")
-  learner      Learner        @relation(fields: [learnerId], references: [userId], onUpdate: NoAction, onDelete: NoAction)
-  learnerId    String         @map("learner_id")
-  startTime    DateTime       @map("start_time")
-  endTime      DateTime       @map("end_time")
-  status       String         @default("CONFIRMED") // Default to CONFIRMED for demo simplicity
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @updatedAt @map("updated_at")
+  id           String       @id @default(uuid())
+  instructor   Instructor   @relation(fields: [instructorId], references: [userId], onUpdate: NoAction, onDelete: NoAction)
+  instructorId String       @map("instructor_id")
+  learner      Learner      @relation(fields: [learnerId], references: [userId], onUpdate: NoAction, onDelete: NoAction)
+  learnerId    String       @map("learner_id")
+  startTime    DateTime     @map("start_time")
+  endTime      DateTime     @map("end_time")
+  status       String       @default("CONFIRMED") // Default to CONFIRMED for demo simplicity
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
   scoreSheets  ScoreSheet[]
 
   @@map("training")
@@ -136,7 +136,7 @@ model ScoreSheet {
   id         String   @id @default(uuid())
   training   Training @relation(fields: [trainingId], references: [id])
   trainingId String   @map("training_id")
-  data       String   @db.Text() @default("{}")
+  data       String   @default("{}") @db.Text()
   // data       String   @db.NVarChar(Max) @default("{}")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")

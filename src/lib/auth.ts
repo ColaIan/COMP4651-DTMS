@@ -1,10 +1,10 @@
-import { betterAuth } from 'better-auth';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
-// If your Prisma file is located elsewhere, you can change the path
 import { getRequestEvent } from '$app/server';
+import { AZURE_ENTRA_ID_CLIENT_ID, AZURE_ENTRA_ID_CLIENT_SECRET } from '$env/static/private';
 import { authPlugin } from '$lib/auth-plugin';
 import { blobServiceClient } from '$lib/azure/blob';
 import prisma from '$lib/prisma.server';
+import { betterAuth } from 'better-auth';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 export const auth = betterAuth({
 	database: prismaAdapter(prisma, {
@@ -65,5 +65,14 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true
 	},
+    socialProviders: {
+        microsoft: { 
+            clientId: AZURE_ENTRA_ID_CLIENT_ID, 
+            clientSecret: AZURE_ENTRA_ID_CLIENT_SECRET, 
+            tenantId: 'common', 
+            authority: "https://login.microsoftonline.com", // Authentication authority URL
+            prompt: "select_account", // Forces account selection
+        }, 
+    },
 	plugins: [authPlugin(), sveltekitCookies(getRequestEvent)]
 });

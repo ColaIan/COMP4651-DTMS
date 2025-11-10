@@ -47,9 +47,19 @@
 				class="mt-1 w-full rounded border border-gray-300 px-3 py-2"
 			/>
 		</div>
-		<div class="mt-6">
+		<div class="mt-6 flex gap-2">
 			<button type="submit" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
 				>Login</button
+			>
+			<button
+				type="button"
+				class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+				onclick={() => {
+					signIn.social({
+						provider: 'microsoft',
+						callbackURL: '/' // The URL to redirect to after the sign in
+					});
+				}}>Login with Azure Entra ID (Microsoft)</button
 			>
 		</div>
 	</form>
