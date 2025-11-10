@@ -1,4 +1,4 @@
-import db from '$lib/db.server';
+import {getDb} from '$lib/db.server';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const userId = locals.user.id;
 	const isInstructor = locals.user.role === 'INSTRUCTOR';
 	
-	const trainings = await db
+	const trainings = await getDb()
 		.selectFrom('training')
 		.innerJoin('user as learner_user', 'training.learner_id', 'learner_user.id')
 		.innerJoin('learner', 'learner.user_id', 'learner_user.id')

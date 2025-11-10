@@ -1,4 +1,4 @@
-import db from '$lib/db.server';
+import {getDb} from '$lib/db.server';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	if (!locals.user) throw redirect(307, '/login');
 	if (locals.user.role !== 'LEARNER') throw redirect(307, '/training');
 	
-	const instructorData = await db
+	const instructorData = await getDb()
 		.selectFrom('user')
 		.leftJoin('instructor', 'instructor.user_id', 'user.id')
 		.select([
@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	}
 	
 	const availabilities = instructorData['instructor.user_id']
-		? await db
+		? await getDb()
 				.selectFrom('instructor_availability')
 				.select(['id', 'instructor_id', 'start_time', 'end_time'])
 				.where('instructor_id', '=', params.id)
@@ -70,7 +70,7 @@ export const actions = {
 				throw new Error('End time must be after start time');
 			}
 			
-			await db.transaction().execute(async (trx) => {
+			await getDb().transaction().execute(async (trx) => {
 				// check if start time >= now + leading time in minutes
 				const leadingTime = await trx
 					.selectFrom('instructor')

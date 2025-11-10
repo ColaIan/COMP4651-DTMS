@@ -5,8 +5,7 @@ import * as Tarn from 'tarn';
 import * as Tedious from 'tedious';
 import type { DB } from '../generated/kysely/types';
 
-const password = parse(env.AZURE_SQL_DATABASE_URL).toSchema(MSSQL_SCHEMA).password;
-export const dialect = new MssqlDialect({
+export const getDialect = ()=> new MssqlDialect({
 	tarn: {
 		...Tarn,
 		options: {
@@ -21,7 +20,7 @@ export const dialect = new MssqlDialect({
 				authentication: {
 					options: {
 						userName: 'comp4651dtms',
-						password: password
+						password: parse(env.AZURE_SQL_DATABASE_URL).toSchema(MSSQL_SCHEMA)
 					},
 					type: 'default'
 				},
@@ -35,8 +34,7 @@ export const dialect = new MssqlDialect({
 	}
 });
 
-export const db = new Kysely<DB>({
-	dialect
+let db: Kysely<DB> | undefined = undefined;
+export const getDb = ()=> db ??= new Kysely<DB>({
+	dialect: getDialect()
 });
-
-export default db;

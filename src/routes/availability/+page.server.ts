@@ -1,4 +1,4 @@
-import db from '$lib/db.server';
+import {getDb} from '$lib/db.server';
 import { randomUUID } from 'node:crypto';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
@@ -6,7 +6,7 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) redirect(307, '/login');
 	if (locals.user.role !== 'INSTRUCTOR') redirect(307, '/instructor');
-	const rows = await db
+	const rows = await getDb()
 		.selectFrom('instructor_availability')
 		.selectAll()
 		.where('instructor_id', '=', locals.user.id)
@@ -35,7 +35,7 @@ export const actions = {
 		if (startTime >= endTime) {
 			throw new Error('End time must be after start time');
 		}
-		await db
+		await getDb()
 			.insertInto('instructor_availability')
 			.values({
 				id: randomUUID(),
@@ -50,7 +50,7 @@ export const actions = {
 		if (locals.user.role !== 'INSTRUCTOR') redirect(307, '/instructor');
 		const data = await request.formData();
 		const id = data.get('id') as string;
- 		await db
+ 		await getDb()
  			.deleteFrom('instructor_availability')
  			.where('id', '=', id)
  			.where('instructor_id', '=', locals.user.id)

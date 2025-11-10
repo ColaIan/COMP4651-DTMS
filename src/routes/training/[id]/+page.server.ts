@@ -1,6 +1,6 @@
 import { getBlobExists, getBlobSasUri } from '$lib/azure/blob';
 import { getTrainingGroupUrl, sendTrainingMessage } from '$lib/azure/web-pubsub';
-import { db } from '$lib/db.server';
+import { getDb } from '$lib/db.server';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	if (!locals.user) {
 		redirect(307, '/login');
 	}
-	const trainingRow = await db
+	const trainingRow = await getDb()
 		.selectFrom('training')
 		.selectAll()
 		.where('id', '=', params.id)
@@ -16,27 +16,27 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	// gather related data (learner user, instructor user, score sheets)
 	const learner = trainingRow
-		? await db
+		? await getDb()
 				.selectFrom('learner')
 				.select(['license_number', 'license_expiry'])
 				.where('user_id', '=', trainingRow.learner_id)
 				.executeTakeFirst()
 		: null;
 	const learnerUser = trainingRow
-		? await db
+		? await getDb()
 				.selectFrom('user')
 				.select(['id', 'name'])
 				.where('id', '=', trainingRow.learner_id)
 				.executeTakeFirst()
 		: null;
 	const instructorUser = trainingRow
-		? await db
+		? await getDb()
 				.selectFrom('user')
 				.select(['id', 'name'])
 				.where('id', '=', trainingRow.instructor_id)
 				.executeTakeFirst()
 		: null;
-	const scoreSheetsRaw = await db
+	const scoreSheetsRaw = await getDb()
 		.selectFrom('score_sheet')
 		.selectAll()
 		.where('training_id', '=', params.id)
@@ -103,7 +103,7 @@ export const actions = {
 			data: '{}',
 			updated_at: new Date()
 		};
-		await db.insertInto('score_sheet').values(scoreSheet).execute();
+		await getDb().insertInto('score_sheet').values(scoreSheet).execute();
 		await sendTrainingMessage(params.id, {
 			type: 'addScoreSheet',
 			scoreSheetId: scoreSheet.id,
@@ -127,7 +127,7 @@ export const actions = {
 			scoreSheetId,
 			data: JSON.parse(data)
 		});
-		await db.updateTable('score_sheet').set({ data }).where('id', '=', scoreSheetId).execute();
+		await getDb().updateTable('score_sheet').set({ data }).where('id', '=', scoreSheetId).execute();
 		throw redirect(303, '/training/' + params.id);
 	},
 	deleteScoreSheet: async ({ request, locals, params }) => {
@@ -140,7 +140,7 @@ export const actions = {
 
 		const formData = await request.formData();
 		const scoreSheetId = formData.get('scoreSheetId') as string;
-		await db.deleteFrom('score_sheet').where('id', '=', scoreSheetId).execute();
+		await getDb().deleteFrom('score_sheet').where('id', '=', scoreSheetId).execute();
 		await sendTrainingMessage(params.id, { type: 'deleteScoreSheet', scoreSheetId });
 		throw redirect(303, '/training/' + params.id);
 	}

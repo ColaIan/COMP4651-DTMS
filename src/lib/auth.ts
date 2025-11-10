@@ -2,12 +2,12 @@ import { getRequestEvent } from '$app/server';
 import { env } from '$env/dynamic/private';
 import { authPlugin } from '$lib/auth-plugin';
 import { getBlobExists, getBlobServiceClient } from '$lib/azure/blob';
-import { db, dialect } from '$lib/db.server';
+import { getDialect, getDb } from '$lib/db.server';
 import { betterAuth } from 'better-auth';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 
 export const auth = betterAuth({
-	database: { dialect, type: 'mssql' },
+	database: { dialect: getDialect(), type: 'mssql' },
 	user: {
 		additionalFields: {
 			role: {
@@ -37,7 +37,7 @@ export const auth = betterAuth({
 					try {
 						if (user.role === 'INSTRUCTOR') {
 							// Insert instructor row if it doesn't already exist.
-							await db
+							await getDb()
 								.insertInto('instructor')
 								.values({ user_id: user.id, booking_leading_time: 0 })
 								// .onConflict((oc) => oc.column('user_id').doNothing())
@@ -53,7 +53,7 @@ export const auth = betterAuth({
 										blobHTTPHeaders: { blobContentType: 'image/png' }
 									}
 								);
-							await db
+							await getDb()
 								.insertInto('learner')
 								.values({ user_id: user.id, license_number: licenseNumber, license_expiry: new Date(licenseExpiry) })
 								// .onConflict((oc) =>
@@ -69,7 +69,7 @@ export const auth = betterAuth({
 								.getBlockBlobClient(user.id);
 							await blobClient.delete();
 						}
-						await db.deleteFrom('user').where('id', '=', user.id).execute();
+						await getDb().deleteFrom('user').where('id', '=', user.id).execute();
 						throw new Error('Error creating user related data, reverting user creation');
 					}
 				}
