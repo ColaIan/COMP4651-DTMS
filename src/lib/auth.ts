@@ -1,5 +1,5 @@
 import { getRequestEvent } from '$app/server';
-import { env } from '$env/dynamic/private';
+import { AZURE_ENTRA_ID_CLIENT_ID, AZURE_ENTRA_ID_CLIENT_SECRET } from '$env/static/private';
 import { authPlugin } from '$lib/auth-plugin';
 import { getBlobExists, getBlobServiceClient } from '$lib/azure/blob';
 import prisma from '$lib/prisma.server';
@@ -47,7 +47,7 @@ export const auth = betterAuth({
 							});
 						} else {
 							const { licenseFile, licenseNumber, licenseExpiry } = ctx!.body;
-							await getBlobServiceClient
+							await getBlobServiceClient()
 								.getContainerClient('licenses')
 								.getBlockBlobClient(user.id)
 								.uploadData(
@@ -70,7 +70,7 @@ export const auth = betterAuth({
 							});
 						}
 					} catch {
-						if (user.role === "LEARNER" && await getBlobExists('licenses', user.id)) {
+						if (user.role === 'LEARNER' && (await getBlobExists('licenses', user.id))) {
 							const blobClient = getBlobServiceClient()
 								.getContainerClient('licenses')
 								.getBlockBlobClient(user.id);
@@ -89,8 +89,8 @@ export const auth = betterAuth({
 	},
 	socialProviders: {
 		microsoft: {
-			clientId: env.AZURE_ENTRA_ID_CLIENT_ID,
-			clientSecret: env.AZURE_ENTRA_ID_CLIENT_SECRET,
+			clientId: AZURE_ENTRA_ID_CLIENT_ID,
+			clientSecret: AZURE_ENTRA_ID_CLIENT_SECRET,
 			tenantId: 'common',
 			authority: 'https://login.microsoftonline.com', // Authentication authority URL
 			prompt: 'select_account' // Forces account selection

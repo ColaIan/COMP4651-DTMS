@@ -18,19 +18,20 @@
 			const licenseExpiry = formData.get('licenseExpiry') as string;
 			const licenseFile = formData.get('licenseFile') as File;
 
-			const readFile = () => new Promise<string | null>((resolve) => {
-				if (role === 'LEARNER' && licenseFile instanceof File) {
-					const reader = new FileReader();
-					reader.onload = (event) => {
-						const licenseFileData = event.target!.result as string;
-						resolve(licenseFileData);
-					};
-					reader.readAsDataURL(licenseFile);
-				} else {
-					resolve(null);
-				}
-			});
-			
+			const readFile = () =>
+				new Promise<string | null>((resolve) => {
+					if (role === 'LEARNER' && licenseFile instanceof File) {
+						const reader = new FileReader();
+						reader.onload = (event) => {
+							const licenseFileData = event.target!.result as string;
+							resolve(licenseFileData);
+						};
+						reader.readAsDataURL(licenseFile);
+					} else {
+						resolve(null);
+					}
+				});
+
 			signUp
 				.email(
 					{

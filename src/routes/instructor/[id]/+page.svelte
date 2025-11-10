@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Temporal } from "temporal-polyfill";
+	import { Temporal } from 'temporal-polyfill';
 
 	const props = $props();
-	let startTime = $state(Temporal.Now.zonedDateTimeISO().toString().slice(0,16));
-	let endTime = $state(Temporal.Now.zonedDateTimeISO().toString().slice(0,16));
+	let startTime = $state(Temporal.Now.zonedDateTimeISO().toString().slice(0, 16));
+	let endTime = $state(Temporal.Now.zonedDateTimeISO().toString().slice(0, 16));
 </script>
 
 <div class="container mx-auto p-4">
@@ -18,9 +18,17 @@
 				name="startTimeLocal"
 				required
 				class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm"
-                bind:value={startTime}
-            />
-            <input type="hidden" name="startTime" value={Temporal.Instant.from(Temporal.PlainDateTime.from(startTime).toZonedDateTime(Temporal.Now.timeZoneId()).toString())} />
+				bind:value={startTime}
+			/>
+			<input
+				type="hidden"
+				name="startTime"
+				value={Temporal.Instant.from(
+					Temporal.PlainDateTime.from(startTime)
+						.toZonedDateTime(Temporal.Now.timeZoneId())
+						.toString()
+				)}
+			/>
 		</div>
 		<div class="mb-4">
 			<label for="endTime" class="block text-sm font-medium text-gray-700">End Time</label>
@@ -30,9 +38,15 @@
 				name="endTimeLocal"
 				required
 				class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm"
-                bind:value={endTime}
-            />
-            <input type="hidden" name="endTime" value={Temporal.Instant.from(Temporal.PlainDateTime.from(endTime).toZonedDateTime(Temporal.Now.timeZoneId()).toString())} />
+				bind:value={endTime}
+			/>
+			<input
+				type="hidden"
+				name="endTime"
+				value={Temporal.Instant.from(
+					Temporal.PlainDateTime.from(endTime).toZonedDateTime(Temporal.Now.timeZoneId()).toString()
+				)}
+			/>
 		</div>
 		<button type="submit" class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
 			>Request Training</button

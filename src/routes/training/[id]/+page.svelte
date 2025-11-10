@@ -6,14 +6,14 @@
 	import ScoreSheet from './ScoreSheet.svelte';
 
 	const props = $props();
-    const session = getContext<ReturnType<typeof useSession>>('session');
-		const scoreSheets = $state(props.data.training.scoreSheets);
+	const session = getContext<ReturnType<typeof useSession>>('session');
+	const scoreSheets = $state(props.data.training.scoreSheets);
 
-	onMount(()=>{
-		const client = new WebPubSubClient(props.data.trainingPubSubUrl)
-		client.on("group-message", (message)=>{
-			const data = message.message.data as {type: string, [key: string]: any};
-			switch(data.type as string){
+	onMount(() => {
+		const client = new WebPubSubClient(props.data.trainingPubSubUrl);
+		client.on('group-message', (message) => {
+			const data = message.message.data as { type: string; [key: string]: any };
+			switch (data.type as string) {
 				case 'addScoreSheet':
 					scoreSheets.push({
 						id: data.scoreSheetId,
@@ -21,21 +21,21 @@
 					});
 					break;
 				case 'updateScoreSheet':
-					const scoreSheet = scoreSheets.find((s: {id: string})=>s.id === data.scoreSheetId);
+					const scoreSheet = scoreSheets.find((s: { id: string }) => s.id === data.scoreSheetId);
 					if (scoreSheet) scoreSheet.data = data.data;
 					break;
 				case 'deleteScoreSheet':
-					const index = scoreSheets.findIndex((s: {id: string})=>s.id === data.scoreSheetId);
-					if(index !== -1) scoreSheets.splice(index, 1);
+					const index = scoreSheets.findIndex((s: { id: string }) => s.id === data.scoreSheetId);
+					if (index !== -1) scoreSheets.splice(index, 1);
 					break;
 			}
 		});
 		client.start();
 
-		return ()=>{
+		return () => {
 			client.stop();
-		}
-	})
+		};
+	});
 </script>
 
 <div class="container mx-auto p-4">
@@ -65,12 +65,14 @@
 		</div>
 	</div>
 	<div class="mb-4">
-		<h2 class="text-xl font-semibold">
-			License
-			</h2>
-		<p>{props.data.training.learner.licenseNumber} ({props.data.training.learner.licenseExpiry.toISOString().split('T')[0]})</p>
+		<h2 class="text-xl font-semibold">License</h2>
+		<p>
+			{props.data.training.learner.licenseNumber} ({props.data.training.learner.licenseExpiry
+				.toISOString()
+				.split('T')[0]})
+		</p>
 		{#if props.data.training.learner.licenseUrl}
-		<img src={props.data.training.learner.licenseUrl} alt="license" class="max-w-full max-h-xl" />
+			<img src={props.data.training.learner.licenseUrl} alt="license" class="max-h-xl max-w-full" />
 		{/if}
 	</div>
 
@@ -78,11 +80,7 @@
 		<h2 class="mb-2 text-xl font-semibold">
 			Score Sheets
 			{#if $session.data?.user.role === 'INSTRUCTOR'}
-				<form
-					method="POST"
-					action="?/addScoreSheet"
-					class="inline-block cursor-pointer text-base"
-				>
+				<form method="POST" action="?/addScoreSheet" class="inline-block cursor-pointer text-base">
 					<button type="submit" class="text-green-600 underline hover:no-underline">Add</button>
 				</form>
 			{/if}

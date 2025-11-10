@@ -31,7 +31,9 @@
 				{#if $session.data.user.role === 'INSTRUCTOR'}
 					<a href="/availability">Availability</a>
 				{/if}
-				<button class="cursor-pointer" onclick={() => signOut().then(()=>goto('/'))}>Logout</button>
+				<button class="cursor-pointer" onclick={() => signOut().then(() => goto('/'))}
+					>Logout</button
+				>
 			{:else}
 				<a href="/login">Login</a>
 				<a href="/register">Register</a>

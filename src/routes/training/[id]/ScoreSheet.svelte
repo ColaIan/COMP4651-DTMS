@@ -35,8 +35,7 @@
 	method="POST"
 	action="?/updateScoreSheet"
 	use:enhance={() => {
-		return  () => {
-		};
+		return () => {};
 	}}
 >
 	<input type="hidden" name="scoreSheetId" value={scoreSheet.id} />
@@ -149,7 +148,7 @@
 		{/if}
 	</tr>
 {/snippet}
-<div class="lg:flex border-y">
+<div class="border-y lg:flex">
 	<div class="lg:w-3/10 lg:border-r">
 		<table>
 			<thead>
@@ -169,7 +168,7 @@
 			<div class="px-1">
 				<p class="mb-1 text-sm font-medium">Remarks:</p>
 				<textarea
-					class="w-full border-none p-0 resize-none"
+					class="w-full resize-none border-none p-0"
 					rows="8"
 					bind:value={scoreSheet.data.remarks}
 					onblur={() => {

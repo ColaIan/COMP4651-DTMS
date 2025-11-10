@@ -75,27 +75,27 @@ export const items = [
 ];
 export const serious = [
 	11, 12, 16, 19, 27, 28, 29, 30, 35, 40, 41, 42, 49, 56, 57, 62, 64, 66, 67, 68
-]
-export const category: {[key: number]: string} = {
-	1: "STOP ON SLOPE\n( Not Applicable To Motor Cycle part B Test )",
-	4: "START ON SLOPE\n( Not Applicable To Motor Cycle Part B Test )",
-	7: "TURNABOUT IN A NARROW ROAD\n( Not Applicable To Motor Cycle And Articulated Vehicle )",
-	13: "REVERSING AND PARKING\n( Not Applicable To Motor Cycle )",
-	17: "MANOEUVRES FOR MOTOR CYCLE PART B TEST",
-	20: "STARTING",
-	21: "MOVING OFF",
-	23: "STOPPING",
-	27: "DRIVING CONCEPT",
-	35: "SPEED CONTROL",
-	37: "USE OF SIGNAL",
-	40: "DRIVING TECHNIQUE",
-	51: "USE OF CONTROL",
-	56: "OVERTAKING",
-	58: "ROAD JUNCTION",
-	62: "TRAFFIC SIGNS ROAD MARKINGS",
-	64: "TRAFFIC SIGNALS",
-	66: "PEDESTRIAN CROSSING",
-	67: "MANOEUVRES FOR MOTOR CYCLE",
-	70: "MANOEUVRES FOR ARTICULATED VEHICLE",
-	73: "ORAL TEST"
-}
+];
+export const category: { [key: number]: string } = {
+	1: 'STOP ON SLOPE\n( Not Applicable To Motor Cycle part B Test )',
+	4: 'START ON SLOPE\n( Not Applicable To Motor Cycle Part B Test )',
+	7: 'TURNABOUT IN A NARROW ROAD\n( Not Applicable To Motor Cycle And Articulated Vehicle )',
+	13: 'REVERSING AND PARKING\n( Not Applicable To Motor Cycle )',
+	17: 'MANOEUVRES FOR MOTOR CYCLE PART B TEST',
+	20: 'STARTING',
+	21: 'MOVING OFF',
+	23: 'STOPPING',
+	27: 'DRIVING CONCEPT',
+	35: 'SPEED CONTROL',
+	37: 'USE OF SIGNAL',
+	40: 'DRIVING TECHNIQUE',
+	51: 'USE OF CONTROL',
+	56: 'OVERTAKING',
+	58: 'ROAD JUNCTION',
+	62: 'TRAFFIC SIGNS ROAD MARKINGS',
+	64: 'TRAFFIC SIGNALS',
+	66: 'PEDESTRIAN CROSSING',
+	67: 'MANOEUVRES FOR MOTOR CYCLE',
+	70: 'MANOEUVRES FOR ARTICULATED VEHICLE',
+	73: 'ORAL TEST'
+};

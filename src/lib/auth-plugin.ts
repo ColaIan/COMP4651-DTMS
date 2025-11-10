@@ -20,5 +20,5 @@ export const authPlugin = () =>
 			// 		}
 			// 	}
 			// }
-		},
+		}
 	}) satisfies BetterAuthPlugin;

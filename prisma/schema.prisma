@@ -1,6 +1,8 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
+  engineType= "client"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -136,8 +138,8 @@ model ScoreSheet {
   id         String   @id @default(uuid())
   training   Training @relation(fields: [trainingId], references: [id])
   trainingId String   @map("training_id")
-  data       String   @default("{}") @db.Text()
-  // data       String   @db.NVarChar(Max) @default("{}")
+  // data       String   @default("{}") @db.Text()
+  data       String   @db.NVarChar(Max) @default("{}")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 

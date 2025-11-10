@@ -1,9 +1,9 @@
-import { env } from '$env/dynamic/private';
-import { PrismaClient } from '../generated/prisma/client.js';
+import { AZURE_SQL_DATABASE_URL } from '$env/static/private';
+import { PrismaClient } from '../generated/prisma/client';
 
 const prisma = new PrismaClient({
-	datasourceUrl: env.DATABASE_URL
-	// datasourceUrl: env.AZURE_SQL_DATABASE_URL
+	// datasourceUrl: DATABASE_URL
+	datasourceUrl: AZURE_SQL_DATABASE_URL
 });
 
 export default prisma;
