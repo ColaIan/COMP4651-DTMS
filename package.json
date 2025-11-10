@@ -51,5 +51,8 @@
 		"dotenv": "^17.2.3",
 		"temporal-polyfill": "^0.3.0",
 		"zod": "^4.1.12"
+	},
+	"engines": {
+		"node": ">=20.0.0"
 	}
 }
