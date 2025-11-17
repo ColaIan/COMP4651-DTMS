@@ -3,7 +3,7 @@ import { WebPubSubServiceClient, type JSONTypes } from '@azure/web-pubsub';
 
 let trainingService: WebPubSubServiceClient | undefined = undefined;
 export const getTrainingService = () =>
-	trainingService ||
+	trainingService ??
 	(trainingService = new WebPubSubServiceClient(env.AZURE_WEB_PUBSUB_URL, 'trainings'));
 
 export const sendTrainingMessage = async (trainingId: string, data: JSONTypes) =>

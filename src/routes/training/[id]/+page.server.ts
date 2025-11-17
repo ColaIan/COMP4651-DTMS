@@ -1,6 +1,6 @@
-import { getBlobExists, getBlobSasUri } from '$lib/azure/blob';
-import { getTrainingGroupUrl, sendTrainingMessage } from '$lib/azure/web-pubsub';
-import { getDb } from '$lib/db.server';
+import { getBlobExists, getBlobSasUri } from '$lib/server/azure/blob';
+import { getDb } from '$lib/server/azure/db';
+import { getTrainingGroupUrl, sendTrainingMessage } from '$lib/server/azure/web-pubsub';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -41,7 +41,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		.selectAll()
 		.where('training_id', '=', params.id)
 		.execute();
-	// Only allow access if the user is the learner or instructor of the training
+	// Redirect to training list if training not found
 	if (!trainingRow) throw redirect(307, '/training');
 
 	const training = {
@@ -69,6 +69,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		}))
 	};
 
+	// Only allow access if the user is the learner or instructor of the training
 	if (
 		(locals.user.role === 'LEARNER' && training.learner.userId !== locals.user.id) ||
 		(locals.user.role === 'INSTRUCTOR' && training.instructor.userId !== locals.user.id)

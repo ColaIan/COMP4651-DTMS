@@ -1,8 +1,8 @@
 import { getRequestEvent } from '$app/server';
 import { env } from '$env/dynamic/private';
 import { authPlugin } from '$lib/auth-plugin';
-import { getBlobExists, getBlobServiceClient } from '$lib/azure/blob';
-import { getDialect, getDb } from '$lib/db.server';
+import { getDb, getDialect } from '$lib/server/azure/db';
+import { getBlobExists, getBlobServiceClient } from '$lib/server/azure/blob';
 import { betterAuth } from 'better-auth';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 

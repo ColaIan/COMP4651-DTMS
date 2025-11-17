@@ -1,6 +1,6 @@
-import {getDb} from '$lib/db.server';
-import { randomUUID } from 'node:crypto';
+import { getDb } from '$lib/server/azure/db';
 import { redirect } from '@sveltejs/kit';
+import { randomUUID } from 'node:crypto';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {

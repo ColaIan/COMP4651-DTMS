@@ -1,0 +1,49 @@
+
+@startuml
+left to right direction
+
+actor Guest
+actor "Driving Instructor" as Instructor
+actor Learner
+
+rectangle "COMP4651 Driving Training Management System" {
+  ' Guest Use Cases
+  usecase "Login" as UC1
+  usecase "Register as Learner\n(with license no., expiry,\nscanned copy)" as UC2
+  usecase "Register as Driving Instructor" as UC3
+
+  ' Driving Instructor Use Cases
+  usecase "Logout" as UC4
+  usecase "Edit Score Sheets" as UC5
+  usecase "Create Score Sheets" as UC6
+  usecase "View Training Details\n(with learner license info)" as UC7
+  usecase "Add Training Availabilities" as UC8
+
+  ' Learner Use Cases
+  usecase "Logout" as UC9
+  usecase "Book Trainings" as UC10
+  usecase "View Training Details\n(with score sheets)" as UC11
+}
+
+' Associations
+Guest --> UC1
+Guest --> UC2
+Guest --> UC3
+
+UC4 <-- Instructor
+UC5 <-- Instructor
+UC6 <-- Instructor
+UC7 <-- Instructor
+UC8 <-- Instructor
+
+Learner --> UC9
+Learner --> UC10
+Learner --> UC11
+
+UC3 -[hidden]- UC8
+UC2 -[hidden]- UC7
+UC1 -[hidden]- UC6
+UC10 -[hidden]- UC5
+UC9 -[hidden]- UC4
+
+@enduml

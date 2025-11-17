@@ -3,7 +3,7 @@ import { MSSQL_SCHEMA, parse } from '@tediousjs/connection-string';
 import { Kysely, MssqlDialect } from 'kysely';
 import * as Tarn from 'tarn';
 import * as Tedious from 'tedious';
-import type { DB } from '../generated/kysely/types';
+import type { DB } from '../../../generated/kysely/types';
 
 export const getDialect = ()=> new MssqlDialect({
 	tarn: {
@@ -20,7 +20,7 @@ export const getDialect = ()=> new MssqlDialect({
 				authentication: {
 					options: {
 						userName: 'comp4651dtms',
-						password: parse(env.AZURE_SQL_DATABASE_URL).toSchema(MSSQL_SCHEMA)
+						password: parse(env.AZURE_SQL_DATABASE_URL).toSchema(MSSQL_SCHEMA).password
 					},
 					type: 'default'
 				},

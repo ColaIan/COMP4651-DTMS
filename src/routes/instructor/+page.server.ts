@@ -1,4 +1,4 @@
-import {getDb} from '$lib/db.server';
+import { getDb } from '$lib/server/azure/db';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 

@@ -24,7 +24,7 @@ export const items = [
 	'Fail to check traffic conditions',
 	'Roll backwards forwards',
 	'Stop in improper position',
-	'Fail to switch Off engine and or engage gear before quitting vehicle',
+	'Fail to switch off engine and or engage gear before quitting vehicle',
 	'Fail to check traffic conditions before changing lanes',
 	'Wrong side driving',
 	'Cut out sharply from behind object',
