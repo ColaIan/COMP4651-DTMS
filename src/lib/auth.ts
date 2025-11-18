@@ -7,6 +7,7 @@ import { betterAuth } from 'better-auth';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 
 export const auth = betterAuth({
+	basePath: '/auth',
 	database: { dialect: getDialect(), type: 'mssql' },
 	user: {
 		additionalFields: {

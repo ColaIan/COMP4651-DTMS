@@ -48,12 +48,12 @@
 			/>
 		</div>
 		<div class="mt-6 flex gap-2">
-			<button type="submit" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+			<button type="submit" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 cursor-pointer"
 				>Login</button
 			>
 			<button
 				type="button"
-				class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+				class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 cursor-pointer"
 				onclick={() => {
 					signIn.social({
 						provider: 'microsoft',

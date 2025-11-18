@@ -134,7 +134,7 @@
 			</div>
 		{/if}
 		<div class="mt-6">
-			<button type="submit" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+			<button type="submit" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 cursor-pointer"
 				>Register</button
 			>
 		</div>
