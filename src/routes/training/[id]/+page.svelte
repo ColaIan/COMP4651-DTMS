@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { useSession } from '$lib/auth-client';
 	import { WebPubSubClient } from '@azure/web-pubsub-client';
 	import { getContext, onMount } from 'svelte';
@@ -69,8 +70,7 @@
 		<p>
 			{props.data.training.learner.licenseNumber} ({props.data.training.learner.licenseExpiry
 				.toISOString()
-				.split('T')[0]
-				})
+				.split('T')[0]})
 		</p>
 		{#if props.data.training.learner.licenseUrl}
 			<img src={props.data.training.learner.licenseUrl} alt="license" class="max-h-xl max-w-full" />
@@ -81,7 +81,14 @@
 		<h2 class="mb-2 text-xl font-semibold">
 			Score Sheets
 			{#if $session.data?.user.role === 'INSTRUCTOR'}
-				<form method="POST" action="?/addScoreSheet" class="inline-block cursor-pointer text-base">
+				<form
+					method="POST"
+					action="?/addScoreSheet"
+					class="inline-block cursor-pointer text-base"
+					use:enhance={() => {
+						return () => {};
+					}}
+				>
 					<button type="submit" class="text-green-600 underline hover:no-underline">Add</button>
 				</form>
 			{/if}
@@ -96,6 +103,9 @@
 								method="POST"
 								action="?/deleteScoreSheet"
 								class="inline-block cursor-pointer text-base"
+								use:enhance={() => {
+									return () => {};
+								}}
 							>
 								<input type="hidden" name="scoreSheetId" value={scoreSheet.id} />
 								<button type="submit" class="text-red-600 underline hover:no-underline"
